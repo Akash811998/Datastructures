@@ -1,138 +1,182 @@
 #include "main.h"
 
-//private variables
+// private variables
 
-uint32_t s_count=0;
+uint32_t s_count = 0;
 
 /*
 Return pointer of head if successfully node is initialised else return 0 if the node was not dynamically created
 */
-s_node* LL_singly_init(s_node *head,char *data)
+s_node *LL_singly_init(s_node *head, char *data)
 {
-    s_node *new=(s_node*)malloc(sizeof(s_node));
+    if (head != NULL) // if Linke dlist is already initialised, then don't initialise the linked list as it will lead to memory leaks
+    {
+        printf("Linked list already initialised\n");
+        return head;
+    }
+    s_node *new = (s_node *)malloc(sizeof(s_node));
     uint8_t len;
-    len=strlen(data);
-    printf("len: %d\n",len);
-    if (new == NULL || (len>DATA_LENGTH-1))  // -1 because a null character has to be added at last
+    len = strlen(data);
+    if (new == NULL || (len > DATA_LENGTH - 1)) // -1 because a null character has to be added at last
     {
         printf("Space cannot be created in the heap or data is greater than 10 characters\n");
         return 0;
     }
-    
-    if(head == NULL)
+
+    if (head == NULL)
     {
-        memcpy(new->data,data,len+1);  // len+1 : add a null character at last
-        new->next_node=NULL;
-        head=new;
+        memcpy(new->data, data, len + 1); // len+1 : add a null character at last
+        new->next_node = NULL;
+        head = new;
         s_count++;
     }
-    printf(" \" %s \" node created\n",new->data);
+    printf(" \" %s \" node created\n", new->data);
     return head;
 }
 
-bool LL_singly_insert_node(s_node *start, char* data)
+s_node* LL_singly_insert_node(s_node *start, char *data, uint32_t count)
 {
-    s_node *new=(s_node*)malloc(sizeof(s_node));
+    s_node *new = (s_node *)malloc(sizeof(s_node));
     uint8_t len;
-    len=strlen(data);
-    printf("len: %d\n",len);
-    if(new==0 || (len>DATA_LENGTH-1)) // -1 because a null character has to be added at last
+    len = strlen(data);
+    if (new == 0 || (len > DATA_LENGTH - 1)) // -1 because a null character has to be added at last
     {
-        printf("Space cannot be created in the heap or data is greater than 10 characters\n");
+        printf("Space cannot be created in the heap or data is greater than %d characters\n", DATA_LENGTH);
         return 0;
     }
-    if(LL_singly_count_nodes(start)==0)
+    if (LL_singly_count_nodes(start) == 0)
     {
         printf("The singly linked list is not initialised yet, first init the Linked list\n");
         return 0;
     }
-    while(start)
-    {
-        if(start->next_node == 0)
-            break;
-         start=start->next_node;
-    }
-    memcpy(new->data,data, len+1);  // len+1 : add a null character at last
+    memcpy(new->data, data, len + 1); // len+1 : add a null character at last
+    new->next_node = NULL;
 
-    new->next_node=NULL;
-    start->next_node=new;
-    
-    printf("\"%s\" node created\n",new->data);
-    return 1;
+    s_node* prev=NULL;
+    s_node* current=start;
+
+    if (count <= LL_singly_count_nodes(current)) //place it if present somewhere in start or middle of linked list
+    {
+        
+        if(count==1)
+        {
+            new->next_node=current;
+            printf("\"%s\" node created\n", new->data);
+            return new; 
+        }
+        while (count != 1)
+        {
+            prev=current;
+            current=current->next_node;
+            count--;
+        }
+        prev->next_node=new;
+        new->next_node=current;
+    }
+    else //add at the end of the linked list
+    {
+        while (current)
+        {
+            if (current->next_node == 0)
+                break;
+            current = current->next_node;
+        }
+         current->next_node = new;
+    }
+    printf("\"%s\" node created\n", new->data);
+    return start;
 }
 
 void LL_singly_display_nodes(s_node *start)
 {
-    if(start==NULL)
+    if (start == NULL)
     {
         printf("No nodes available to show\n");
         return;
     }
     printf("\n\nSingly Linked list nodes data values are as follows:\n");
-    while(start!=0)
+    while (start != 0)
     {
-        printf("%s",start->data);        
-        if(start->next_node==0)
-             break;    
-        start=start->next_node;
+        printf("%s", start->data);
+        if (start->next_node == 0)
+            break;
+        start = start->next_node;
         printf(" -> ");
     }
     printf("\n");
 }
 
-s_node* LL_singly_delete_all(s_node *head)
+s_node *LL_singly_delete_all(s_node *head)
 {
-     s_node *temp = head;
-   // s_node *next_node;
-    if(head==NULL)
+    s_node *temp = head;
+    // s_node *next_node;
+    if (head == NULL)
     {
         printf("There are no elements to delete\n");
         return head;
     }
-    while(temp !=NULL)
+    while (temp != NULL)
     {
-        temp=temp->next_node;
+        temp = temp->next_node;
         free(head);
-        //free((s_node*)head);
-        head=temp;
+        // free((s_node*)head);
+        head = temp;
     }
     return NULL;
 }
 
-s_node* LL_singly_delete_node(uint32_t num, s_node *head)
+s_node *LL_singly_delete_node(uint32_t num, s_node *head)
 {
-    s_node *prev=NULL;
-    s_node *current=NULL;
-    s_node *next=head;
-    uint32_t count=0;
+    s_node *prev = NULL;
+    s_node *current = NULL;
+    s_node *next = head;
+    uint32_t count = 0;
 
-    if(num==1)
+    if (num == 1)
     {
         free(next);
         return next->next_node;
     }
 
-    while(count<num)
+    while (count < num)
     {
-        prev=current;
-        current=next;
-        next=next->next_node;
+        prev = current;
+        current = next;
+        next = next->next_node;
         count++;
     }
-    prev->next_node=current->next_node;
+    prev->next_node = current->next_node;
     free(current);
     return head;
-    
-
 }
 uint32_t LL_singly_count_nodes(s_node *start)
 {
-    uint32_t count=0;
+    uint32_t count = 0;
 
-    while(start!=0)
+    while (start != 0)
     {
         count++;
-        start=start->next_node;
+        start = start->next_node;
     }
     return count;
+}
+
+bool LL_singly_search_node(s_node* head,char* data)
+{
+    uint32_t count=1;
+    while(head)
+    {
+        if(!strcmp(head->data,data))
+        {
+            printf("Found the node /' %s /' at position %d\n",data,count);
+            return 1;
+        }
+        else
+        {
+            head=head->next_node;
+            count++;
+        }
+    }
+    printf("The node /' %s /' was not found!!!!!!!\n");
+    return 0;
 }
