@@ -21,8 +21,7 @@ s_node* LL_singly_init(s_node *head,char *data)
     
     if(head == NULL)
     {
-        memcpy(new->data,data,len); 
-        new->data[len]='\0';
+        memcpy(new->data,data,len+1);  // len+1 : add a null character at last
         new->next_node=NULL;
         head=new;
         s_count++;
@@ -53,8 +52,7 @@ bool LL_singly_insert_node(s_node *start, char* data)
             break;
          start=start->next_node;
     }
-    memcpy(new->data,data, len); 
-    new->data[len]='\0'; //add a null character at last
+    memcpy(new->data,data, len+1);  // len+1 : add a null character at last
 
     new->next_node=NULL;
     start->next_node=new;
@@ -65,6 +63,11 @@ bool LL_singly_insert_node(s_node *start, char* data)
 
 void LL_singly_display_nodes(s_node *start)
 {
+    if(start==NULL)
+    {
+        printf("No nodes available to show\n");
+        return;
+    }
     printf("\n\nSingly Linked list nodes data values are as follows:\n");
     while(start!=0)
     {
@@ -77,6 +80,51 @@ void LL_singly_display_nodes(s_node *start)
     printf("\n");
 }
 
+s_node* LL_singly_delete_all(s_node *head)
+{
+     s_node *temp = head;
+   // s_node *next_node;
+    if(head==NULL)
+    {
+        printf("There are no elements to delete\n");
+        return head;
+    }
+    while(temp !=NULL)
+    {
+        temp=temp->next_node;
+        free(head);
+        //free((s_node*)head);
+        head=temp;
+    }
+    return NULL;
+}
+
+s_node* LL_singly_delete_node(uint32_t num, s_node *head)
+{
+    s_node *prev=NULL;
+    s_node *current=NULL;
+    s_node *next=head;
+    uint32_t count=0;
+
+    if(num==1)
+    {
+        free(next);
+        return next->next_node;
+    }
+
+    while(count<num)
+    {
+        prev=current;
+        current=next;
+        next=next->next_node;
+        count++;
+    }
+    prev->next_node=current->next_node;
+    free(current);
+    return head;
+    
+
+}
 uint32_t LL_singly_count_nodes(s_node *start)
 {
     uint32_t count=0;
