@@ -20,3 +20,4 @@ s_node* LL_singly_insert_node(s_node *start,char*, uint32_t);
 s_node* LL_singly_delete_all(s_node*);
 s_node* LL_singly_delete_node(uint32_t , s_node*);
 bool LL_singly_search_node(s_node* head,char* data);
+void LL_singly_search_in_all_nodes(s_node* head,char* data);

@@ -34,7 +34,11 @@ s_node *LL_singly_init(s_node *head, char *data)
     return head;
 }
 
-s_node* LL_singly_insert_node(s_node *start, char *data, uint32_t count)
+/*
+    Instead of this implementation we can also add addign elements ar the start instead of end
+    to get O(1) time complexity instead of O(n)
+*/
+s_node* LL_singly_insert_node(s_node *start, char *data, uint32_t loc)
 {
     s_node *new = (s_node *)malloc(sizeof(s_node));
     uint8_t len;
@@ -55,20 +59,20 @@ s_node* LL_singly_insert_node(s_node *start, char *data, uint32_t count)
     s_node* prev=NULL;
     s_node* current=start;
 
-    if (count <= LL_singly_count_nodes(current)) //place it if present somewhere in start or middle of linked list
+    if (loc <= LL_singly_count_nodes(current)) //place it if present somewhere in start or middle of linked list
     {
         
-        if(count==1)
+        if(loc==1)
         {
             new->next_node=current;
             printf("\"%s\" node created\n", new->data);
             return new; 
         }
-        while (count != 1)
+        while (loc != 1)
         {
             prev=current;
             current=current->next_node;
-            count--;
+            loc--;
         }
         prev->next_node=new;
         new->next_node=current;
@@ -177,6 +181,30 @@ bool LL_singly_search_node(s_node* head,char* data)
             count++;
         }
     }
-    printf("The node /' %s /' was not found!!!!!!!\n");
+    printf("The node /' %s /' was not found!!!!!!!\n",data);
     return 0;
+}
+
+
+//Search for the data in all nodes and not just one
+void LL_singly_search_in_all_nodes(s_node* head,char* data)
+{
+    uint32_t count=1;
+    s_node* current=head;
+    bool flag=0;
+
+    while(current)
+    {
+        if(!strcmp(current->data,data))
+        {
+            printf("\"%s\" was found at node:%d\n",data,count);
+            flag=1;
+        }
+            
+        current=current->next_node;
+        count++;
+    }
+    if(!flag)
+        printf("\"%s\" was not found :( \n");
+
 }
