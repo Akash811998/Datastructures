@@ -1,7 +1,7 @@
 
 #define MAX_QUEUE_SIZE 3
 
-typedef struct _queue
+typedef struct _QUEUE
 {
     int ele[MAX_QUEUE_SIZE];
     int count;

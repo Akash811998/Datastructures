@@ -8,5 +8,6 @@
 #include "singly.h"
 #include "doubly.h"
 #include "queue.h"
+#include "stack.h"
 
 
